@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Tic Tac Toe</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            display: none;
+        }
+        
+        td {
+            width: 50px;
+            height: 50px;
+            border: 1px solid #000;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+<button id="btnGameStart">Start Game</button>
+<table id="play-field">
+    <tr>
+        <td data-field="0"></td>
+        <td data-field="1"></td>
+        <td data-field="2"></td>
+    </tr>
+    <tr>
+        <td data-field="3"></td>
+        <td data-field="4"></td>
+        <td data-field="5"></td>
+    </tr>
+    <tr>
+        <td data-field="6"></td>
+        <td data-field="7"></td>
+        <td data-field="8"></td>
+    </tr>
+</table>
+<h3 id="log"></h3>
+<script>
+    let playField = document.querySelector("#play-field");
+    let btnGameStart = document.querySelector("#btnGameStart");
+    playField.style.margin = `250px 550px`;
+    btnGameStart.style.margin = `300px 600px`;
+    btnGameStart.style.width = `100px`;
+    btnGameStart.style.height = `50px`;
+    btnGameStart.style.fontSize = `15px`;
+    btnGameStart.style.cursor = `pointer  `;
+    let log = document.querySelector('#log');
+    //создаем пустой масив из 9 ячеек - это игровое поле
+    let gameState = ["", "", "", "", "", "", "", "", ""];
+    //
+    let gameOver = false;
+
+    btnGameStart.addEventListener(`click`, function () {
+        playField.style.display = `block`;
+        btnGameStart.style.display = `none`;
+    });
+    //нужен обьект события event хранится в аргументах функции
+    playField.addEventListener(`click`, function (event) {
+        //отобразить номер поля
+        let index = event.target.dataset.field;
+        if (gameState[index] === "" && !gameOver) {
+            //вставляем крестик картинку используя свойство background
+            event.target.style.background = "url(x.png) no-repeat";
+            gameState[index] = "x";
+            checkWin(`x`);
+            //проверка где пустая клетка
+            if (gameState.indexOf("") !== -1 && !gameOver) {// true && true
+                moveAI();
+            }
+            else {
+                gameOver = true;
+                reset();
+            }
+        }
+    }, false);
+
+    function moveAI() {
+        let isCorrect = false;
+        let index;
+        //пока true выполняй код - показывает
+        while (!isCorrect) {
+            //случайные цифры от 0 до 8
+            index = Math.floor(Math.random() * 9);
+            if (gameState[index] === "") {
+                isCorrect = true;
+            }
+        }
+        //найди цифру которую комп (он же функция moveAI) загадал и назаначить ему стиль
+        document.querySelector(`#play-field td[data-field='${index}']`).style.background = "url(o.png) no-repeat";
+        //Изменить игровое полу
+        gameState[index] = "o";
+        checkWin('o');
+    }
+
+    function checkWin(sign) {
+        if (
+            (gameState[0] === gameState[1] && gameState[1] === gameState[2] && gameState[2] === sign) ||
+            (gameState[3] === gameState[4] && gameState[4] === gameState[5] && gameState[5] === sign) ||
+            (gameState[6] === gameState[7] && gameState[7] === gameState[8] && gameState[8] === sign) ||
+            (gameState[0] === gameState[3] && gameState[3] === gameState[6] && gameState[6] === sign) ||
+            (gameState[1] === gameState[4] && gameState[4] === gameState[7] && gameState[7] === sign) ||
+            (gameState[2] === gameState[5] && gameState[5] === gameState[8] && gameState[8] === sign) ||
+            (gameState[0] === gameState[4] && gameState[4] === gameState[8] && gameState[8] === sign) ||
+            (gameState[2] === gameState[4] && gameState[4] === gameState[6] && gameState[6] === sign)
+        ) {
+            gameOver = true;
+            log.innerText = 'Игра окончена. Выиграли ' + sign;
+            reset();
+        }
+    }
+
+    function reset() {
+        setTimeout(function () {
+            location.reload();
+        }, 1000);
+
+    }
+
+    //при старте игры игрового поля не видно а видно только кнопка начать игру
+    //при нажатии на кнопку - она исчезает и таблица появляется
+    //после завершения игры когда гемовер таблица исчезает и появляется кнопка начать заново но страница не презагружается а очищается у td убрать background
+</script>
+</body>
+</html>
